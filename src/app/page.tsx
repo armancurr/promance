@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence } from "motion/react";
+// import { motion, AnimatePresence } from "motion/react";
 import { PromptInput } from "../components/prompt-input";
-import { AnalysisPanel } from "../components/analysis-panel";
+// import { AnalysisPanel } from "../components/analysis-panel";
 import { EnhancedPromptModal } from "../components/enhanced-prompt-modal";
 import { Header } from "../components/header";
 import { useAppStore } from "../../stores/app-store";
@@ -28,14 +28,14 @@ export default function Home() {
             </h1>
             <p className="max-w-xl mx-auto text-sm text-neutral-400">
               Just enter your Gemini API key and your prompt, and Promance will
-              enhance it for you but make sure to use the enhanced prompt in
-              your agent.
+              enhance it for you, make sure to use the enhanced prompt in your
+              agent.
             </p>
           </div>
 
           <PromptInput />
 
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {shouldShowAnalysis && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -50,7 +50,7 @@ export default function Home() {
                 <AnalysisPanel analysis={analysis} isLoading={isAnalyzing} />
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </div>
       </div>
 

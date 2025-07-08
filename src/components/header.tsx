@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { useAppStore } from "../../stores/app-store";
 import { InputSanitizer } from "../lib/sanitizer";
-import { Key, GithubLogo, Spinner } from "@phosphor-icons/react";
+import { Spinner, Key, GithubLogo, Package } from "@phosphor-icons/react";
 
 export function Header() {
   const { apiKey, setApiKey } = useAppStore();
@@ -57,7 +57,7 @@ export function Header() {
             side="bottom"
             align="start"
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
                 <h4 className="text-sm font-medium text-neutral-200">
                   Gemini API Key
@@ -81,7 +81,6 @@ export function Header() {
 
         {/* GitHub Button */}
         <Button
-          asChild
           size="sm"
           className="bg-gradient-to-b from-neutral-800 to-neutral-900 text-xs text-neutral-200 border-2 border-neutral-700 rounded-2xl hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 hover:shadow-lg transition-colors duration-300 cursor-pointer"
         >
@@ -94,6 +93,14 @@ export function Header() {
             <GithubLogo className="h-4 w-4" />
             View Source
           </a>
+        </Button>
+        <Button
+          size="sm"
+          disabled
+          className="bg-gradient-to-b from-neutral-800 to-neutral-900 text-xs text-neutral-200 border-2 border-neutral-700 rounded-2xl hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 hover:shadow-lg transition-colors duration-300 cursor-pointer opacity-50 cursor-not-allowed"
+        >
+          <Package size={16} />
+          Command Line
         </Button>
       </div>
     </header>

@@ -67,7 +67,7 @@ export function PromptInput() {
             onChange={handlePromptChange}
             onKeyDown={handleKeyDown}
             placeholder="Enter your prompt here..."
-            className="min-h-40 resize-none text-md p-8 pb-16 border-2 border-neutral-900 bg-neutral-950 rounded-3xl placeholder:text-neutral-600 text-neutral-200 focus:border-neutral-900 focus:ring-transparent focus:ring-0 focus:ring-offset-0 focus:outline-black/50 scrollbar-hide"
+            className="min-h-40 resize-none text-md p-6 pb-16 border-2 border-neutral-900 bg-neutral-950 rounded-3xl placeholder:text-neutral-600 text-neutral-200 focus:border-neutral-900 focus:ring-transparent focus:ring-0 focus:ring-offset-0 focus:outline-black/50 scrollbar-hide"
             maxLength={5000}
             style={{
               scrollbarWidth: "none",
