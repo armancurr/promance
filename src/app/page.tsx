@@ -35,22 +35,22 @@ export default function Home() {
 
           <PromptInput />
 
-          {/* <AnimatePresence>
+          <AnimatePresence>
             {shouldShowAnalysis && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ 
+                transition={{
                   duration: 0.5,
-                  ease: [0.4, 0.0, 0.2, 1]
+                  ease: [0.4, 0.0, 0.2, 1],
                 }}
                 className="mt-8"
               >
                 <AnalysisPanel analysis={analysis} isLoading={isAnalyzing} />
               </motion.div>
             )}
-          </AnimatePresence> */}
+          </AnimatePresence>
         </div>
       </div>
 

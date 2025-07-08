@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "./ui/button";
-import { X, Clipboard, CopySimple } from "@phosphor-icons/react";
+import { CopySimple } from "@phosphor-icons/react";
 import { useAppStore } from "../../stores/app-store";
 import { Editor } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";

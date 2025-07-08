@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Warning, CheckCircle, Clock, Lightbulb } from "@phosphor-icons/react";
+import { Warning, CheckCircle, Lightbulb } from "@phosphor-icons/react";
 import type { AnalysisPanelProps } from "../../types";
 import { LoadingSpinner } from "./loading-spinner";
 
