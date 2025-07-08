@@ -17,9 +17,11 @@ export const useAppStore = create<AppStore>()(
 
       enhancedPrompt: "",
       isEnhancing: false,
+      hasEnhanced: false,
       enhancementHistory: [],
       setEnhancedPrompt: (prompt: string) => set({ enhancedPrompt: prompt }),
       setIsEnhancing: (enhancing: boolean) => set({ isEnhancing: enhancing }),
+      setHasEnhanced: (enhanced: boolean) => set({ hasEnhanced: enhanced }),
       addEnhancementToHistory: (enhancement: EnhancementResponse) =>
         set((state) => ({
           enhancementHistory: [
@@ -28,9 +30,9 @@ export const useAppStore = create<AppStore>()(
           ],
         })),
 
-      isSidePanelOpen: false,
-      toggleSidePanel: () =>
-        set((state) => ({ isSidePanelOpen: !state.isSidePanelOpen })),
+      isModalOpen: false,
+      setIsModalOpen: (open: boolean) => set({ isModalOpen: open }),
+      toggleModal: () => set((state) => ({ isModalOpen: !state.isModalOpen })),
 
       apiKey: "",
       setApiKey: (key: string) => set({ apiKey: key }),

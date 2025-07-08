@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "./ui/button";
-import { X, Clipboard } from "@phosphor-icons/react";
+import { X, Clipboard, CopySimple } from "@phosphor-icons/react";
 import { useAppStore } from "../../stores/app-store";
 import { Editor } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
@@ -207,9 +208,9 @@ const vercelTheme: editor.IStandaloneThemeData = {
   },
 };
 
-export function SidePanel() {
-  const { enhancedPrompt, setEnhancedPrompt, toggleSidePanel } = useAppStore();
-
+export function EnhancedPromptModal() {
+  const { enhancedPrompt, setEnhancedPrompt, isModalOpen, setIsModalOpen } =
+    useAppStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -217,76 +218,104 @@ export function SidePanel() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b border-neutral-900">
-        <div>
-          <h3 className="text-md font-semibold text-neutral-200">
-            Enhanced Prompt
-          </h3>
-          <p className="text-xs text-neutral-400 mt-1">
-            You can edit the prompt if you like
-          </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            onClick={handleCopy}
-            size="sm"
-            className={`bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-lg hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300 ${copied ? "text-green-600" : ""}`}
-          >
-            <Clipboard className="h-4 w-4" />
-            Copy
-          </Button>
-          {/* <Button
-            onClick={toggleSidePanel}
-            size="sm"
-            className="bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-lg hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300"
-          >
-            <X className="h-4 w-4" />
-            Close
-          </Button> */}
-        </div>
-      </div>
 
-      <div className="flex-1">
-        <Editor
-          height="100%"
-          defaultLanguage="markdown"
-          value={enhancedPrompt}
-          onChange={(value) => setEnhancedPrompt(value || "")}
-          theme="vercel-dark"
-          beforeMount={(monaco) => {
-            monaco.editor.defineTheme("vercel-dark", vercelTheme);
-          }}
-          options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            lineHeight: 20,
-            fontFamily:
-              'Geist Mono, ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-            fontLigatures: true,
-            wordWrap: "on",
-            padding: { top: 24, bottom: 24 },
-            scrollBeyondLastLine: false,
-            renderLineHighlight: "gutter",
-            folding: true,
-            lineNumbers: "off",
-            glyphMargin: false,
-            lineDecorationsWidth: 10,
-            lineNumbersMinChars: 3,
-            renderWhitespace: "boundary",
-            bracketPairColorization: { enabled: true },
-            guides: {
-              indentation: true,
-              highlightActiveIndentation: true,
-            },
-            cursorBlinking: "smooth",
-            cursorStyle: "underline",
-            cursorSmoothCaretAnimation: "on",
-            smoothScrolling: true,
-          }}
-        />
-      </div>
-    </div>
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <AnimatePresence>
+      {isModalOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={handleClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{
+              duration: 0.4,
+              ease: [0.4, 0.0, 0.2, 1],
+            }}
+            className="bg-neutral-950 border-2 border-neutral-800 rounded-3xl w-[90vw] h-[80vh] max-w-4xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-neutral-800">
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-200">
+                  Enhanced Prompt
+                </h3>
+                <p className="text-xs text-neutral-400 mt-1">
+                  You can edit the prompt if you like
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  onClick={handleCopy}
+                  size="sm"
+                  className={`bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-lg hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300 ${copied ? "text-green-600" : ""}`}
+                >
+                  <CopySimple className="h-4 w-4" />
+                  {copied ? "Exported" : "Export"}
+                </Button>
+                {/* <Button
+                  onClick={handleClose}
+                  size="sm"
+                  className="bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-lg hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300"
+                >
+                  <X className="h-4 w-4" />
+                  Close
+                </Button> */}
+              </div>
+            </div>
+
+            <div className="flex-1 rounded-3xl overflow-hidden">
+              <Editor
+                height="100%"
+                defaultLanguage="markdown"
+                value={enhancedPrompt}
+                onChange={(value) => setEnhancedPrompt(value || "")}
+                theme="vercel-dark"
+                beforeMount={(monaco) => {
+                  monaco.editor.defineTheme("vercel-dark", vercelTheme);
+                }}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineHeight: 20,
+                  fontFamily:
+                    'Geist Mono, ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+                  fontLigatures: true,
+                  wordWrap: "on",
+                  padding: { top: 24, bottom: 24 },
+                  scrollBeyondLastLine: false,
+                  renderLineHighlight: "gutter",
+                  folding: true,
+                  lineNumbers: "off",
+                  glyphMargin: false,
+                  lineDecorationsWidth: 10,
+                  lineNumbersMinChars: 3,
+                  renderWhitespace: "boundary",
+                  bracketPairColorization: { enabled: true },
+                  guides: {
+                    indentation: true,
+                    highlightActiveIndentation: true,
+                  },
+                  cursorBlinking: "smooth",
+                  cursorStyle: "underline",
+                  cursorSmoothCaretAnimation: "on",
+                  smoothScrolling: true,
+                }}
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -33,13 +33,16 @@ export interface AppState {
 
   enhancedPrompt: string;
   isEnhancing: boolean;
+  hasEnhanced: boolean;
   enhancementHistory: EnhancementResponse[];
   setEnhancedPrompt: (prompt: string) => void;
   setIsEnhancing: (enhancing: boolean) => void;
+  setHasEnhanced: (enhanced: boolean) => void;
   addEnhancementToHistory: (enhancement: EnhancementResponse) => void;
 
-  isSidePanelOpen: boolean;
-  toggleSidePanel: () => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
+  toggleModal: () => void;
 
   apiKey: string;
   setApiKey: (key: string) => void;
@@ -85,13 +88,6 @@ export interface PromptInputProps {
 export interface AnalysisPanelProps {
   analysis: PromptAnalysis | null;
   isLoading: boolean;
-}
-
-export interface SidePanelProps {
-  isOpen: boolean;
-  onClose: () => void;
-  content: string;
-  onChange: (content: string) => void;
 }
 
 export interface EnhancementButtonProps {

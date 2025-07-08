@@ -12,9 +12,10 @@ export function useAIEnhancement() {
     apiKey,
     setEnhancedPrompt,
     setIsEnhancing,
+    setHasEnhanced,
     addEnhancementToHistory,
-    toggleSidePanel,
-    isSidePanelOpen,
+    setIsModalOpen,
+    isModalOpen,
   } = useAppStore();
 
   const [error, setError] = useState<string | null>(null);
@@ -50,9 +51,10 @@ export function useAIEnhancement() {
 
         setEnhancedPrompt(enhancement.enhancedPrompt);
         addEnhancementToHistory(enhancement);
+        setHasEnhanced(true);
 
-        if (!isSidePanelOpen) {
-          toggleSidePanel();
+        if (!isModalOpen) {
+          setIsModalOpen(true);
         }
 
         return true;
@@ -70,9 +72,10 @@ export function useAIEnhancement() {
       apiKey,
       setEnhancedPrompt,
       setIsEnhancing,
+      setHasEnhanced,
       addEnhancementToHistory,
-      toggleSidePanel,
-      isSidePanelOpen,
+      setIsModalOpen,
+      isModalOpen,
     ],
   );
 
