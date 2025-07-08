@@ -6,15 +6,14 @@ import { PromptInput } from "../components/prompt-input";
 // import { AnalysisPanel } from "../components/analysis-panel";
 import { EnhancedPromptModal } from "../components/enhanced-prompt-modal";
 import { Header } from "../components/header";
-import { useAppStore } from "../../stores/app-store";
-import { usePromptAnalysis } from "../../hooks/use-prompt-analysis";
+// import { useAppStore } from "../../stores/app-store";
+// import { usePromptAnalysis } from "../../hooks/use-prompt-analysis";
 
 export default function Home() {
-  const { isEnhancing } = useAppStore();
-  const { analysis, isAnalyzing } = usePromptAnalysis();
+  // const { isEnhancing } = useAppStore();
+  // const { analysis, isAnalyzing } = usePromptAnalysis();
 
-  // Only show analysis when enhancement is in progress
-  const shouldShowAnalysis = isEnhancing && (analysis || isAnalyzing);
+  // const shouldShowAnalysis = isEnhancing && (analysis || isAnalyzing);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-stone-500 via-stone-800 to-stone-950">
