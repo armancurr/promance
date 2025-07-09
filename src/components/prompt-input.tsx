@@ -14,7 +14,6 @@ export function PromptInput() {
     originalPrompt,
     setOriginalPrompt,
     apiKey,
-    analysis,
     hasEnhanced,
     isModalOpen,
     setIsModalOpen,
@@ -54,7 +53,7 @@ export function PromptInput() {
     }
   };
 
-  const canEnhance = originalPrompt && analysis && apiKey && !isEnhancing;
+  const canEnhance = originalPrompt && apiKey && !isEnhancing;
   const canReopen = hasEnhanced && !isModalOpen;
 
   return (
@@ -67,7 +66,7 @@ export function PromptInput() {
             onChange={handlePromptChange}
             onKeyDown={handleKeyDown}
             placeholder="Enter your prompt here..."
-            className="min-h-40 resize-none text-md p-6 pb-16 border-2 border-neutral-900 bg-neutral-950 rounded-3xl placeholder:text-neutral-600 text-neutral-200 focus:border-neutral-900 focus:ring-transparent focus:ring-0 focus:ring-offset-0 focus:outline-black/50 scrollbar-hide"
+            className="min-h-40 resize-none text-md p-6 pb-16 border-2 border-neutral-900 bg-neutral-950 rounded-3xl placeholder:text-neutral-600 text-neutral-300 focus:border-neutral-900 focus:ring-transparent focus:ring-0 focus:ring-offset-0 focus:outline-black/50 scrollbar-hide"
             maxLength={5000}
             style={{
               scrollbarWidth: "none",
@@ -98,7 +97,7 @@ export function PromptInput() {
               className="text-xs bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-2xl hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Sparkle className="h-4 w-4" />
-              {isEnhancing ? "Enhancing..." : "Enhance"}
+              Enhance
             </Button>
           </motion.div>
         </div>

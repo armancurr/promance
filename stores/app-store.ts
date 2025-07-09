@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AppState, PromptAnalysis, EnhancementResponse } from "../types";
+import type { AppState, EnhancementResponse } from "../types";
 
 interface AppStore extends AppState {}
 
@@ -10,17 +10,19 @@ export const useAppStore = create<AppStore>()(
       originalPrompt: "",
       setOriginalPrompt: (prompt: string) => set({ originalPrompt: prompt }),
 
-      analysis: null,
-      isAnalyzing: false,
-      setAnalysis: (analysis: PromptAnalysis | null) => set({ analysis }),
-      setIsAnalyzing: (analyzing: boolean) => set({ isAnalyzing: analyzing }),
-
       enhancedPrompt: "",
       isEnhancing: false,
+      isStreaming: false,
+      streamedContent: "",
       hasEnhanced: false,
       enhancementHistory: [],
       setEnhancedPrompt: (prompt: string) => set({ enhancedPrompt: prompt }),
       setIsEnhancing: (enhancing: boolean) => set({ isEnhancing: enhancing }),
+      setIsStreaming: (streaming: boolean) => set({ isStreaming: streaming }),
+      setStreamedContent: (content: string) =>
+        set({ streamedContent: content }),
+      appendStreamedContent: (chunk: string) =>
+        set((state) => ({ streamedContent: state.streamedContent + chunk })),
       setHasEnhanced: (enhanced: boolean) => set({ hasEnhanced: enhanced }),
       addEnhancementToHistory: (enhancement: EnhancementResponse) =>
         set((state) => ({

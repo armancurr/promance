@@ -209,12 +209,19 @@ const vercelTheme: editor.IStandaloneThemeData = {
 };
 
 export function EnhancedPromptModal() {
-  const { enhancedPrompt, setEnhancedPrompt, isModalOpen, setIsModalOpen } =
-    useAppStore();
+  const {
+    enhancedPrompt,
+    setEnhancedPrompt,
+    isModalOpen,
+    setIsModalOpen,
+    isStreaming,
+    streamedContent,
+  } = useAppStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(enhancedPrompt);
+    const contentToCopy = isStreaming ? streamedContent : enhancedPrompt;
+    navigator.clipboard.writeText(contentToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -248,17 +255,22 @@ export function EnhancedPromptModal() {
             <div className="flex items-center justify-between p-6 border-b border-neutral-800">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-200">
-                  Enhanced Prompt
+                  {isStreaming
+                    ? "Generating Enhanced Prompt..."
+                    : "Enhanced Prompt"}
                 </h3>
                 <p className="text-xs text-neutral-400 mt-1">
-                  You can edit the prompt if you like
+                  {isStreaming
+                    ? "AI is enhancing your prompt in real-time"
+                    : "You can edit the prompt if you like"}
                 </p>
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   onClick={handleCopy}
                   size="sm"
-                  className={`bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-lg hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300 ${copied ? "text-green-600" : ""}`}
+                  disabled={isStreaming && !streamedContent}
+                  className={`bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 border-2 border-neutral-800 cursor-pointer rounded-2xl hover:bg-gradient-to-b hover:from-neutral-900 hover:to-neutral-950 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${copied ? "text-green-600" : ""}`}
                 >
                   <CopySimple className="h-4 w-4" />
                   {copied ? "Exported" : "Export"}
@@ -274,12 +286,14 @@ export function EnhancedPromptModal() {
               </div>
             </div>
 
-            <div className="flex-1 rounded-3xl overflow-hidden">
+            <div className="flex-1 rounded-3xl overflow-hidden relative">
               <Editor
                 height="100%"
                 defaultLanguage="markdown"
-                value={enhancedPrompt}
-                onChange={(value) => setEnhancedPrompt(value || "")}
+                value={isStreaming ? streamedContent : enhancedPrompt}
+                onChange={(value) =>
+                  !isStreaming && setEnhancedPrompt(value || "")
+                }
                 theme="vercel-dark"
                 beforeMount={(monaco) => {
                   monaco.editor.defineTheme("vercel-dark", vercelTheme);
@@ -310,8 +324,19 @@ export function EnhancedPromptModal() {
                   cursorStyle: "underline",
                   cursorSmoothCaretAnimation: "on",
                   smoothScrolling: true,
+                  readOnly: isStreaming,
                 }}
               />
+              {isStreaming && (
+                <div className="absolute bottom-6 right-6">
+                  <div className="flex items-center gap-2 bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-neutral-300">
+                      Streaming...
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </motion.div>

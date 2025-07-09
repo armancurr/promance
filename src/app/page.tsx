@@ -6,7 +6,6 @@ import { PromptInput } from "../components/prompt-input";
 // import { AnalysisPanel } from "../components/analysis-panel";
 import { EnhancedPromptModal } from "../components/enhanced-prompt-modal";
 import { Header } from "../components/header";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-stone-500 via-stone-800 to-stone-950">
@@ -18,7 +17,7 @@ export default function Home() {
             <h1 className="text-6xl text-neutral-200 mb-2 font-serif">
               Promance
             </h1>
-            <p className="max-w-xl mx-auto text-sm text-neutral-400">
+            <p className="max-w-xl mx-auto text-sm text-stone-400">
               Just enter your Gemini API key and your prompt, and Promance will
               enhance it for you, make sure to use the enhanced prompt in your
               agent.

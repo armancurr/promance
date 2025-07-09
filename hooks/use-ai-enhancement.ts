@@ -6,12 +6,16 @@ import { InputSanitizer } from "../src/lib/sanitizer";
 export function useAIEnhancement() {
   const {
     originalPrompt,
-    analysis,
     enhancedPrompt,
     isEnhancing,
+    isStreaming,
+    streamedContent,
     apiKey,
     setEnhancedPrompt,
     setIsEnhancing,
+    setIsStreaming,
+    setStreamedContent,
+    appendStreamedContent,
     setHasEnhanced,
     addEnhancementToHistory,
     setIsModalOpen,
@@ -22,8 +26,8 @@ export function useAIEnhancement() {
 
   const enhancePrompt = useCallback(
     async (userContext?: string) => {
-      if (!originalPrompt || !analysis) {
-        setError("No prompt or analysis available");
+      if (!originalPrompt) {
+        setError("No prompt available");
         return false;
       }
 
@@ -33,7 +37,14 @@ export function useAIEnhancement() {
       }
 
       setIsEnhancing(true);
+      setIsStreaming(true);
+      setStreamedContent("");
       setError(null);
+
+      // Open modal immediately when starting enhancement
+      if (!isModalOpen) {
+        setIsModalOpen(true);
+      }
 
       try {
         AIEnhancer.initialize(apiKey);
@@ -43,19 +54,38 @@ export function useAIEnhancement() {
           ? InputSanitizer.sanitizeText(userContext)
           : undefined;
 
-        const enhancement = await AIEnhancer.enhance({
-          originalPrompt: sanitizedPrompt,
-          analysis,
-          userContext: sanitizedContext,
-        });
+        let fullStreamedContent = "";
 
-        setEnhancedPrompt(enhancement.enhancedPrompt);
+        const enhancement = await AIEnhancer.enhanceWithStreaming(
+          {
+            originalPrompt: sanitizedPrompt,
+            userContext: sanitizedContext,
+          },
+          (chunk: string, isComplete: boolean) => {
+            if (isComplete) {
+              setIsStreaming(false);
+              // Parse the final content to extract the enhanced prompt
+              try {
+                const jsonMatch = fullStreamedContent.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                  const parsed = JSON.parse(jsonMatch[0]);
+                  if (parsed.enhancedPrompt) {
+                    setEnhancedPrompt(parsed.enhancedPrompt);
+                  }
+                }
+              } catch (parseError) {
+                console.warn("Failed to parse streamed content:", parseError);
+              }
+            } else {
+              fullStreamedContent += chunk;
+              appendStreamedContent(chunk);
+            }
+          },
+        );
+
         addEnhancementToHistory(enhancement);
         setHasEnhanced(true);
-
-        if (!isModalOpen) {
-          setIsModalOpen(true);
-        }
+        setEnhancedPrompt(enhancement.enhancedPrompt);
 
         return true;
       } catch (error) {
@@ -64,14 +94,18 @@ export function useAIEnhancement() {
         return false;
       } finally {
         setIsEnhancing(false);
+        setIsStreaming(false);
       }
     },
     [
       originalPrompt,
-      analysis,
       apiKey,
+      streamedContent,
       setEnhancedPrompt,
       setIsEnhancing,
+      setIsStreaming,
+      setStreamedContent,
+      appendStreamedContent,
       setHasEnhanced,
       addEnhancementToHistory,
       setIsModalOpen,
@@ -82,6 +116,8 @@ export function useAIEnhancement() {
   return {
     enhancePrompt,
     isEnhancing,
+    isStreaming,
+    streamedContent,
     error,
     enhancedPrompt,
   };

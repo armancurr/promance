@@ -3,6 +3,7 @@ import type {
   EnhancementRequest,
   EnhancementResponse,
   PromptError,
+  StreamCallback,
 } from "../../types";
 
 export class AIEnhancer {
@@ -86,35 +87,67 @@ Please respond with a JSON object in this exact format:
     }
   }
 
+  static async enhanceWithStreaming(
+    request: EnhancementRequest,
+    onStreamChunk: StreamCallback,
+  ): Promise<EnhancementResponse> {
+    if (!this.genAI) {
+      throw this.createError("API_ERROR", "AI service not initialized");
+    }
+
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
+      const prompt = this.buildEnhancementPrompt(request);
+      const result = await model.generateContentStream(prompt);
+
+      let fullResponse = "";
+
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        if (chunkText) {
+          fullResponse += chunkText;
+          onStreamChunk(chunkText, false);
+        }
+      }
+
+      // Signal completion
+      onStreamChunk("", true);
+
+      return this.parseResponse(fullResponse, request.originalPrompt);
+    } catch (error) {
+      console.error("AI Enhancement streaming error:", error);
+
+      if (error instanceof Error) {
+        if (error.message.includes("API key")) {
+          throw this.createError("API_ERROR", "Invalid API key");
+        }
+        if (
+          error.message.includes("quota") ||
+          error.message.includes("limit")
+        ) {
+          throw this.createError("RATE_LIMIT", "Rate limit exceeded");
+        }
+        if (
+          error.message.includes("network") ||
+          error.message.includes("fetch")
+        ) {
+          throw this.createError("NETWORK_ERROR", "Network connection failed");
+        }
+      }
+
+      throw this.createError("API_ERROR", "Failed to enhance prompt");
+    }
+  }
+
   private static buildEnhancementPrompt(request: EnhancementRequest): string {
-    const { originalPrompt, analysis, userContext } = request;
+    const { originalPrompt, userContext } = request;
 
     let prompt = `${this.SYSTEM_PROMPT}\n\n`;
 
     prompt += `ORIGINAL PROMPT:\n"${originalPrompt}"\n\n`;
-
-    prompt += `ANALYSIS SCORES:\n`;
-    prompt += `- Clarity: ${analysis.clarity}/10\n`;
-    prompt += `- Specificity: ${analysis.specificity}/10\n`;
-    prompt += `- Structure: ${analysis.structure}/10\n`;
-    prompt += `- Completeness: ${analysis.completeness}/10\n`;
-    prompt += `- Is Vague: ${analysis.isVague}\n\n`;
-
-    if (analysis.missingElements.length > 0) {
-      prompt += `MISSING ELEMENTS:\n`;
-      analysis.missingElements.forEach((element) => {
-        prompt += `- ${element}\n`;
-      });
-      prompt += `\n`;
-    }
-
-    if (analysis.suggestions.length > 0) {
-      prompt += `SUGGESTIONS:\n`;
-      analysis.suggestions.forEach((suggestion) => {
-        prompt += `- ${suggestion}\n`;
-      });
-      prompt += `\n`;
-    }
 
     if (userContext) {
       prompt += `ADDITIONAL CONTEXT:\n${userContext}\n\n`;

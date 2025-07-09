@@ -1,17 +1,5 @@
-export interface PromptAnalysis {
-  clarity: number;
-  specificity: number;
-  structure: number;
-  completeness: number;
-  isVague: boolean;
-  missingElements: string[];
-  suggestions: string[];
-  overallScore: number;
-}
-
 export interface EnhancementRequest {
   originalPrompt: string;
-  analysis: PromptAnalysis;
   userContext?: string;
 }
 
@@ -22,21 +10,31 @@ export interface EnhancementResponse {
   timestamp: number;
 }
 
+export interface StreamedEnhancementResponse {
+  enhancedPrompt: string;
+  improvements: string[];
+  reasoning: string;
+  timestamp: number;
+  isComplete: boolean;
+}
+
+export type StreamCallback = (chunk: string, isComplete: boolean) => void;
+
 export interface AppState {
   originalPrompt: string;
   setOriginalPrompt: (prompt: string) => void;
 
-  analysis: PromptAnalysis | null;
-  isAnalyzing: boolean;
-  setAnalysis: (analysis: PromptAnalysis | null) => void;
-  setIsAnalyzing: (analyzing: boolean) => void;
-
   enhancedPrompt: string;
   isEnhancing: boolean;
+  isStreaming: boolean;
+  streamedContent: string;
   hasEnhanced: boolean;
   enhancementHistory: EnhancementResponse[];
   setEnhancedPrompt: (prompt: string) => void;
   setIsEnhancing: (enhancing: boolean) => void;
+  setIsStreaming: (streaming: boolean) => void;
+  setStreamedContent: (content: string) => void;
+  appendStreamedContent: (chunk: string) => void;
   setHasEnhanced: (enhanced: boolean) => void;
   addEnhancementToHistory: (enhancement: EnhancementResponse) => void;
 
@@ -85,36 +83,11 @@ export interface PromptInputProps {
   disabled?: boolean;
 }
 
-export interface AnalysisPanelProps {
-  analysis: PromptAnalysis | null;
-  isLoading: boolean;
-}
-
 export interface EnhancementButtonProps {
   onClick: () => void;
   disabled: boolean;
   isLoading: boolean;
 }
-
-export const VAGUE_INDICATORS = [
-  "create a landing page",
-  "make something",
-  "build an app",
-  "design a website",
-  "help me with",
-  "write a script",
-  "make a program",
-  "develop something",
-  "build a system",
-  "create content",
-  "generate text",
-  "write code",
-  "make a tool",
-  "design something",
-  "create a solution",
-] as const;
-
-export type VagueIndicator = (typeof VAGUE_INDICATORS)[number];
 
 export interface PromptError extends Error {
   code: "RATE_LIMIT" | "API_ERROR" | "VALIDATION_ERROR" | "NETWORK_ERROR";
