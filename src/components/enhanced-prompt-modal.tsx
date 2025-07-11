@@ -286,10 +286,11 @@ export function EnhancedPromptModal() {
               </div>
             </div>
 
-            <div className="flex-1 rounded-3xl overflow-hidden relative">
-              <Editor
+            <div className="flex-1 rounded-3xl overflow-hidden relative px-6 py-4">
+              <div className="h-full rounded-2xl overflow-hidden">
+                <Editor
                 height="100%"
-                defaultLanguage="markdown"
+                defaultLanguage="plaintext"
                 value={isStreaming ? streamedContent : enhancedPrompt}
                 onChange={(value) =>
                   !isStreaming && setEnhancedPrompt(value || "")
@@ -304,20 +305,20 @@ export function EnhancedPromptModal() {
                   lineHeight: 20,
                   fontFamily:
                     'Geist Mono, ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-                  fontLigatures: true,
+                  fontLigatures: false,
                   wordWrap: "on",
-                  padding: { top: 24, bottom: 24 },
+                  padding: { top: 32, bottom: 32 },
                   scrollBeyondLastLine: false,
-                  renderLineHighlight: "gutter",
-                  folding: true,
+                  renderLineHighlight: "none",
+                  folding: false,
                   lineNumbers: "off",
                   glyphMargin: false,
-                  lineDecorationsWidth: 10,
-                  lineNumbersMinChars: 3,
-                  renderWhitespace: "boundary",
-                  bracketPairColorization: { enabled: true },
+                  lineDecorationsWidth: 0,
+                  lineNumbersMinChars: 0,
+                  renderWhitespace: "none",
+                  bracketPairColorization: { enabled: false },
                   guides: {
-                    indentation: true,
+                    indentation: false,
                     highlightActiveIndentation: true,
                   },
                   cursorBlinking: "smooth",
@@ -337,6 +338,7 @@ export function EnhancedPromptModal() {
                   </div>
                 </div>
               )}
+              </div>
             </div>
           </motion.div>
         </motion.div>
